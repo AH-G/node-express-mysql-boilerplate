@@ -37,9 +37,9 @@ jobs:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
         # Build a docker container and push it to DockerHub
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG .
+        docker build -t detectiveahg/veve-devops-ahg:$IMAGE_TAG .
         echo "Pushing image to DockerHub"
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG
+        docker push detectiveahg/veve-devops-ahg:$IMAGE_TAG
 
     - name: checking the docker iamges
       run: |
