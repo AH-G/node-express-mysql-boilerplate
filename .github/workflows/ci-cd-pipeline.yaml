@@ -22,7 +22,7 @@ jobs:
         aws-region: us-east-1
 
     - name: updating the image of the deployment
-      id: updating image
+      id: updating-image
       run: |
         # Build a docker container and push it to ECR
         aws eks list-clusters
