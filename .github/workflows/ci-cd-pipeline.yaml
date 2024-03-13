@@ -37,9 +37,9 @@ jobs:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
         # Build a docker container and push it to DockerHub
-        docker build -t detectiveahg/veve-devops-ahg:$IMAGE_TAG .
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG .
         echo "Pushing image to DockerHub"
-        docker push detectiveahg/veve-devops-ahg:$IMAGE_TAG
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG
 
     - name: updating the kubeconfig file
       id: updating-kubeconfig
@@ -51,5 +51,5 @@ jobs:
       env:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        kubectl set image deployment/application-deployment boiler-plate=detectiveahg/veve-devops-ahg:$IMAGE_TAG
+        kubectl set image deployment/application-deployment boiler-plate=${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG
       
