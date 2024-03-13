@@ -37,7 +37,7 @@ jobs:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       with:
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG
+        tags: detectiveahg/veve-devops-ahg:v10
 
     - name: Build, tag, and push the image to DockerHub
       id: build-image
