@@ -41,6 +41,10 @@ jobs:
         echo "Pushing image to DockerHub"
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/veve-devops-ahg:$IMAGE_TAG
 
+    - name: checking the docker iamges
+      run: |
+        docker images
+
     - name: updating the kubeconfig file
       id: updating-kubeconfig
       run: |
