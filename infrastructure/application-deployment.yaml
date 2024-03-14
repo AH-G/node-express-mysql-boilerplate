@@ -50,6 +50,13 @@ spec:
           npm start
         ports:
         - containerPort: 3000
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 128Mi
         volumeMounts:
         - name: secrets-store-inline
           mountPath: "/mnt/secrets-store"
