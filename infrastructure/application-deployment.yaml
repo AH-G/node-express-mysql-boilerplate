@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application-deployment
+  labels:
+    app: boiler-plate
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: boiler-plate
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
+      labels:
+        app: boiler-plate
+    spec:
+      serviceAccountName: eks-application-secretmanager-sa
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "eks-veve-aws-secrets"
+      containers:
+      - name: boiler-plate
+        image: detectiveahg/veve-devops-ahg:1bae540
+        command: ["sh", "-c"]
+        args: 
+        - |
+          export PORT=$(sed -E 's/.*"PORT":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          echo "PORT is $PORT"
+          sed -i "s/PORT=.*/PORT=$PORT/" ./.env
+          export SESSION_SECRET=$(sed -E 's/.*"SESSION_SECRET":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          sed -i "s/SESSION_SECRET=.*/SESSION_SECRET=$SESSION_SECRET/" ./.env
+          export DB_HOST=$(sed -E 's/.*"DB_HOST":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          sed -i "s/DB_HOST=.*/DB_HOST=$DB_HOST/" ./.env
+          export DB_PORT=$(sed -E 's/.*"DB_PORT":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          sed -i "s/DB_PORT=.*/DB_PORT=$DB_PORT/" ./.env
+          export DB_DATABASE=$(sed -E 's/.*"DB_DATABASE":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" ./.env
+          export DB_USERNAME=$(sed -E 's/.*"DB_USERNAME":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USERNAME/" ./.env
+          echo "DB_USERNAME is $DB_USERNAME"
+          export DB_PASSWORD=$(sed -E 's/.*"DB_PASSWORD":"?([^,"]*)"?.*/\1/' /mnt/secrets-store/eksSecretVeve)
+          echo "DB_PASSWORD is $DB_PASSWORD"
+          sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" ./.env
+          npm start
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
